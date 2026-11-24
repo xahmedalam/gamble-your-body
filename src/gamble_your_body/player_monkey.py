@@ -39,14 +39,53 @@ class PlayerMonkey:
             self.sprite_walk_strip_count,
             self.sprite_size,
             self.sprite_scale_size,
+            True,
         )
 
         # Collision
         self.collision = pygame.Rect((self.x, self.y, self.width, self.height))
 
+        # Animation vars
+        self.sprite_idle_animation_speed = 1
+        self.sprite_walk_animation_speed = 1
+        self.sprite_idle_current_frame_index = 0
+        self.sprite_walk_current_frame_index = 0
+        self.sprite_idle_last_change = pygame.time.get_ticks()
+        self.sprite_walk_last_change = pygame.time.get_ticks()
+        self.is_walking = False
+
     def draw(self, delta: float) -> None:
+        # Animation idle
+        if (
+            not self.is_walking
+            and pygame.time.get_ticks() - self.sprite_idle_last_change
+            >= (1000 / self.sprite_idle_strip_count) / self.sprite_idle_animation_speed
+        ):
+            self.sprite_idle_current_frame_index += 1
+            # Back to 0 if frames end
+            if self.sprite_idle_current_frame_index == self.sprite_idle_strip_count:
+                self.sprite_idle_current_frame_index = 0
+            self.sprite_idle_last_change = pygame.time.get_ticks()
+
+        # Animation walk
+        if (
+            self.is_walking
+            and pygame.time.get_ticks() - self.sprite_walk_last_change
+            >= (1000 / self.sprite_walk_strip_count) / self.sprite_walk_animation_speed
+        ):
+            self.sprite_walk_current_frame_index += 1
+            # Back to 0 if frames end
+            if self.sprite_walk_current_frame_index == self.sprite_walk_strip_count:
+                self.sprite_walk_current_frame_index = 0
+            self.sprite_walk_last_change = pygame.time.get_ticks()
+
+        if not self.is_walking:
+            sprite = self.sprite_idle[self.sprite_idle_current_frame_index]
+        else:
+            sprite = self.sprite_walk[self.sprite_walk_current_frame_index]
+
         # Draw sprite
-        self.win.blit(self.sprite_idle[0], (self.x, self.y))
+        self.win.blit(sprite, (self.x, self.y))
 
         # Update collision
         self.collision.topleft = (self.x, self.y)

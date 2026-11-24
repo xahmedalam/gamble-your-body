@@ -45,6 +45,13 @@ class Game:
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.player_1.go_right(self.delta)
 
+            self.player_1.is_walking = (
+                keys[pygame.K_LEFT]
+                or keys[pygame.K_RIGHT]
+                or keys[pygame.K_a]
+                or keys[pygame.K_d]
+            )
+
             self.paint()
 
         pygame.quit()
