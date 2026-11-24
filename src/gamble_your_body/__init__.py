@@ -1,5 +1,6 @@
 import pygame
 
+from .audio_manager import AudioManager
 from .player_monkey import PlayerMonkey
 
 # TODO
@@ -15,10 +16,14 @@ class Game:
         self.fps = 60
         self.running = False
 
+        AudioManager.pre_init()
         pygame.init()
         pygame.display.set_caption("Gamble Your Body")
         self.win = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
+
+        # Audio
+        self.audio = AudioManager()
 
         # Settings
         self.players_velocity = 400
@@ -51,6 +56,11 @@ class Game:
                 or keys[pygame.K_a]
                 or keys[pygame.K_d]
             )
+
+            # Audio: toggle mute
+            if keys[pygame.K_m]:
+                self.audio.toggle_mute()
+            self.audio.check_mute()
 
             self.paint()
 
