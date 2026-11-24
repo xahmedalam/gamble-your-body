@@ -53,6 +53,7 @@ class PlayerMonkey:
         self.sprite_idle_last_change = pygame.time.get_ticks()
         self.sprite_walk_last_change = pygame.time.get_ticks()
         self.is_walking = False
+        self.is_flip = False
 
     def draw(self, delta: float) -> None:
         # Animation idle
@@ -84,6 +85,10 @@ class PlayerMonkey:
         else:
             sprite = self.sprite_walk[self.sprite_walk_current_frame_index]
 
+        # Flip ?
+        if self.is_flip:
+            sprite = pygame.transform.flip(sprite, True, False)
+
         # Draw sprite
         self.win.blit(sprite, (self.x, self.y))
 
@@ -93,10 +98,12 @@ class PlayerMonkey:
     def go_left(self, delta: float) -> None:
         self.x -= self.velocity * delta
         self.clamping()
+        self.is_flip = True
 
     def go_right(self, delta: float) -> None:
         self.x += self.velocity * delta
         self.clamping()
+        self.is_flip = False
 
     def clamping(self) -> None:
         self.x = min(self.x, self.win.width - self.width)
